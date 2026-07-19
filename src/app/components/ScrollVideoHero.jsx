@@ -14,16 +14,27 @@ import HeroSection from './HeroSection';
  *   video.currentTime every frame -> "scrubbing" effect.
  * - During the last 20% of scroll the video fades to opacity 0
  *   and the HeroSection crossfades in on top.
+ *
+ * Performance notes:
+ * - Seeks are buffered and applied once per rAF frame so we never
+ *   fire seeks faster than the display refresh rate.
+ * - A dead-zone of 0.08 s prevents micro-seeks from jittering.
  */
 
 const SCRUB_VH = 300; // scroll distance = one full video scrub
 const FADE_START = 0.8; // progress at which the crossfade begins
+const SEEK_DEAD_ZONE = 0.08; // seconds — skip seeks smaller than this
 
 export default function ScrollVideoHero() {
     const containerRef = useRef(null);
     const videoRef = useRef(null);
     const [duration, setDuration] = useState(0);
     const [videoReady, setVideoReady] = useState(false);
+
+    // Buffered target time — updated on every scroll tick,
+    // but only *applied* once per animation frame.
+    const targetTimeRef = useRef(0);
+    const rafIdRef = useRef(null);
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -53,18 +64,34 @@ export default function ScrollVideoHero() {
         }
     }, []);
 
-    // Scrub the video as scroll progress changes
-    useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    // -------------------------------------------------------
+    // RAF seek loop — applies buffered target once per frame
+    // -------------------------------------------------------
+    useEffect(() => {
         const video = videoRef.current;
-        if (!video || !duration) return;
+        if (!video || !videoReady) return;
 
-        // Clamp to avoid seeking past the last frame
-        const targetTime = Math.min(progress * duration, duration - 0.05);
-
-        // Avoid redundant seeks (helps perf, especially on Safari)
-        if (Math.abs(video.currentTime - targetTime) > 0.03) {
-            video.currentTime = targetTime;
+        function tick() {
+            const target = targetTimeRef.current;
+            if (Math.abs(video.currentTime - target) > SEEK_DEAD_ZONE) {
+                video.currentTime = target;
+            }
+            rafIdRef.current = requestAnimationFrame(tick);
         }
+
+        rafIdRef.current = requestAnimationFrame(tick);
+
+        return () => {
+            if (rafIdRef.current != null) {
+                cancelAnimationFrame(rafIdRef.current);
+            }
+        };
+    }, [videoReady]);
+
+    // Buffer target time on every scroll tick
+    useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+        if (!duration) return;
+        targetTimeRef.current = Math.min(progress * duration, duration - 0.05);
     });
 
     return (
@@ -102,3 +129,4 @@ export default function ScrollVideoHero() {
         </div>
     );
 }
+
