@@ -46,7 +46,9 @@ export default function RootLayout({ children }) {
         <MobileOnlyNotice />
         {children}
         <MusicToggle musicSrc="/bg.mp3" />
-        <Image src="/hero-last.png" loading="lazy" alt="Hero" width={1920} height={1080} className="object-contain fixed top-0 h-screen w-full z-[-1]" />
+        <div className="fixed top-0 h-screen w-full z-[-1]">
+          <Image src="/hero-last.png" loading="lazy" alt="Hero" fill className="object-cover" />
+        </div>
       </body>
     </html>
   );
