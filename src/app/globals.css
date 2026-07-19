@@ -1,26 +1,262 @@
 @import "tailwindcss";
 
+/* ============================================
+   ATTACK ON TITAN — WEDDING DESIGN SYSTEM
+   Light Theme Edition
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* AOT Color Palette — Light */
+  --aot-midnight: #ffffff;
+  --aot-void: #f8f6f2;
+  --aot-steel: #f0ede8;
+  --aot-steel-light: #e8e4dd;
+  --aot-crimson: #b5302a;
+  --aot-crimson-glow: #d43d35;
+  --aot-gold: #a8842e;
+  --aot-gold-light: #c9a23c;
+  --aot-emerald: #1f9e56;
+  --aot-parchment: #1a1a1a;
+  --aot-parchment-dark: #4a4540;
+  --aot-mist: #7a746b;
+  --aot-mist-light: #9e978d;
+
+  /* Functional tokens */
+  --background: var(--aot-midnight);
+  --foreground: var(--aot-parchment);
+  --accent: var(--aot-gold);
+  --accent-glow: var(--aot-gold-light);
+  --danger: var(--aot-crimson);
+  --danger-glow: var(--aot-crimson-glow);
 }
+
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-danger: var(--danger);
+  --color-danger-glow: var(--danger-glow);
+  --color-midnight: var(--aot-midnight);
+  --color-void: var(--aot-void);
+  --color-steel: var(--aot-steel);
+  --color-steel-light: var(--aot-steel-light);
+  --color-crimson: var(--aot-crimson);
+  --color-crimson-glow: var(--aot-crimson-glow);
+  --color-gold: var(--aot-gold);
+  --color-gold-light: var(--aot-gold-light);
+  --color-emerald: var(--aot-emerald);
+  --color-parchment: var(--aot-parchment);
+  --color-parchment-dark: var(--aot-parchment-dark);
+  --color-mist: var(--aot-mist);
+  --color-mist-light: var(--aot-mist-light);
+
+  --font-heading: var(--font-cinzel);
+  --font-body: var(--font-outfit);
+  --font-accent: var(--font-playfair);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--aot-crimson);
+  color: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--aot-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--aot-steel-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--aot-gold);
+}
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-20px) rotate(5deg); opacity: 1; }
+}
+
+@keyframes ember-rise {
+  0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+  10% { opacity: 1; transform: translateY(90vh) translateX(10px) scale(1); }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-10vh) translateX(-20px) scale(0.3); opacity: 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px var(--aot-crimson), 0 0 10px var(--aot-crimson); }
+  50% { box-shadow: 0 0 20px var(--aot-crimson), 0 0 40px var(--aot-crimson-glow), 0 0 60px var(--aot-crimson); }
+}
+
+@keyframes gold-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(168, 132, 46, 0.15); }
+  50% { text-shadow: 0 0 20px rgba(168, 132, 46, 0.3), 0 0 40px rgba(168, 132, 46, 0.15); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(30px) translateY(-15px); }
+  50% { transform: translateX(-20px) translateY(10px); }
+  75% { transform: translateX(15px) translateY(-25px); }
+}
+
+@keyframes aurora {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes border-trace {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* ============================================
+   GLASSMORPHISM — LIGHT
+   ============================================ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 132, 46, 0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 132, 46, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
+   PARCHMENT TEXTURE — LIGHT
+   ============================================ */
+
+.parchment {
+  background:
+    linear-gradient(135deg, rgba(248, 246, 242, 0.6) 0%, rgba(240, 237, 232, 0.8) 50%, rgba(248, 246, 242, 0.6) 100%),
+    #ffffff;
+  border: 1px solid rgba(168, 132, 46, 0.15);
+  position: relative;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.parchment::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(168, 132, 46, 0.02) 2px,
+      rgba(168, 132, 46, 0.02) 4px
+    );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ============================================
+   GOLD BORDER EFFECT
+   ============================================ */
+
+.gold-border {
+  position: relative;
+  border: 1px solid rgba(168, 132, 46, 0.2);
+}
+
+.gold-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--aot-gold), transparent);
+  background-size: 200% 100%;
+  animation: border-trace 3s linear infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* ============================================
+   SECTION STYLES
+   ============================================ */
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--aot-gold), transparent);
+  opacity: 0.2;
+  margin: 0 auto;
+  width: 60%;
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+.heading-glow {
+  animation: gold-glow 3s ease-in-out infinite;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--aot-gold), var(--aot-gold-light), var(--aot-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-crimson {
+  background: linear-gradient(135deg, var(--aot-crimson), var(--aot-crimson-glow), var(--aot-crimson));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
