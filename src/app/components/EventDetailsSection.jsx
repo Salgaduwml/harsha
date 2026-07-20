@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import SectionWrapper from "./SectionWrapper";
-import CountdownTimer from "./CountdownTimer";
 
 const EVENTS = [
   {
@@ -61,39 +60,6 @@ export default function EventDetailsSection() {
           Mission briefing — everything you need to know for the operation
         </motion.p>
       </div>
-
-      {/* Countdown */}
-      <motion.div
-        className="mb-20"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3 }}
-      >
-        <p className="text-center text-mist text-sm tracking-[0.2em] uppercase mb-8 font-body">
-          Mission Commences In
-        </p>
-        <CountdownTimer targetDate="2026-08-15T16:00:00" />
-      </motion.div>
-
-      {/* Date banner */}
-      <motion.div
-        className="text-center mb-16"
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-      >
-        <div className="inline-flex items-center gap-4">
-          <div className="w-16 h-[1px] bg-gold/30" />
-          <div>
-            <p className="font-heading text-gold text-2xl md:text-3xl">
-              August 15, 2026
-            </p>
-            <p className="font-body text-mist text-sm mt-1">Saturday</p>
-          </div>
-          <div className="w-16 h-[1px] bg-gold/30" />
-        </div>
-      </motion.div>
 
       {/* Event cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">

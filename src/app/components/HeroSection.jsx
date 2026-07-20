@@ -216,7 +216,7 @@ function FloatingPetals() {
   });
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-5">
       {items.map((item) => (
         <motion.div
           key={item.id}

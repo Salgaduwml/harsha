@@ -20,13 +20,6 @@ const MILESTONES = [
       "Like scouts venturing beyond the walls for the first time, they took a leap of faith. A coffee shop became their training ground, and hours felt like mere minutes.",
   },
   {
-    icon: "🛡️",
-    date: "December 2021",
-    title: "Moving In — Establishing the Base",
-    description:
-      "They built their own headquarters — a home filled with laughter, anime marathons, and home-cooked meals. Every corner told their story.",
-  },
-  {
     icon: "🌟",
     date: "September 2023",
     title: "The Trials — Fighting Side by Side",
@@ -46,14 +39,14 @@ export default function TimelineSection() {
   return (
     <SectionWrapper id="our-story">
       {/* Section header */}
-      <div className="text-center mb-16 md:mb-24">
+      <div className="text-center mb-10">
         <motion.p
           className="font-accent italic text-crimson text-sm tracking-[0.3em] uppercase mb-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          Chapter II
+          Our Journey
         </motion.p>
         <motion.h2
           className="font-heading text-gold text-3xl sm:text-4xl md:text-5xl heading-glow"
@@ -62,9 +55,9 @@ export default function TimelineSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          Beyond the Walls
+          Our Love Story
         </motion.h2>
-        <motion.p
+        {/* <motion.p
           className="font-body text-mist mt-4 max-w-md mx-auto"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -72,7 +65,7 @@ export default function TimelineSection() {
           transition={{ delay: 0.4 }}
         >
           The expedition route of two hearts finding their way to each other
-        </motion.p>
+        </motion.p> */}
       </div>
 
       {/* Timeline */}
@@ -90,7 +83,7 @@ export default function TimelineSection() {
         </div>
 
         {/* Milestone cards */}
-        <div className="flex flex-col gap-12 md:gap-16">
+        <div className="flex flex-col gap-6 md:gap-16">
           {MILESTONES.map((milestone, i) => (
             <TimelineCard
               key={i}
