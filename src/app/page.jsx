@@ -1,13 +1,11 @@
 import Navbar from "./components/Navbar";
 import TimelineSection from "./components/TimelineSection";
-// import WeddingPartySection from "./components/WeddingPartySection";
-// import EventDetailsSection from "./components/EventDetailsSection";
-// import GallerySection from "./components/GallerySection";
-// import RSVPSection from "./components/RSVPSection";
-// import FooterSection from "./components/FooterSection";
 import ScrollVideoHero from "./components/ScrollVideoHero";
 import SmoothScroll from "./components/SmoothScroll";
 import Countdown from "./components/Countdown";
+import LocationSection from "./components/LocationSection";
+import ScratchHeartSection from "./components/ScratchHeartSection";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
@@ -17,39 +15,25 @@ export default function Home() {
 
         <ScrollVideoHero />
 
-        <div className="section-divider" />
-
         <div className="px-4 py-6">
           <TimelineSection />
         </div>
 
-        <div className="section-divider" />
-
         {/* <WeddingPartySection /> */}
-
-        {/* <div className="section-divider" /> */}
 
         <div className="px-4 py-6">
           <Countdown />
         </div>
 
-        {/* <div className="section-divider" /> */}
+        <div className="px-4 py-6">
+          <LocationSection />
+        </div>
 
-        {/* <div className="p-4">
-          <EventDetailsSection />
-        </div> */}
+        <div className="px-4 pt-6">
+          <ScratchHeartSection />
+        </div>
 
-        {/* <div className="section-divider" /> */}
-
-        {/* <GallerySection /> */}
-
-        {/* <div className="section-divider" /> */}
-
-        {/* <RSVPSection /> */}
-
-        {/* <div className="section-divider" /> */}
-
-        {/* <FooterSection /> */}
+        <Footer />
       </main>
     </SmoothScroll>
   );

@@ -14,23 +14,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           setActiveSection(`#${entry.target.id}`);
-  //         }
-  //       });
-  //     },
-  //     { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" }
-  //   );
-
-  //   const sections = document.querySelectorAll("section[id]");
-  //   sections.forEach((section) => observer.observe(section));
-  //   return () => observer.disconnect();
-  // }, []);
-
   const handleLinkClick = (e, href) => {
     e.preventDefault();
     const el = document.querySelector(href);
@@ -41,23 +24,44 @@ export default function Navbar() {
 
   return (
     <>
-
       {/* Navbar */}
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? "bg-white/5 backdrop-blur-sm py-3" : "bg-transparent py-5"
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled
+            ? "py-3"
+            : "bg-transparent py-5"
+        }`}
+        style={
+          isScrolled
+            ? {
+                background: "rgba(253,252,249,0.88)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                borderBottom: "1px solid rgba(242,196,206,0.25)",
+                boxShadow: "0 2px 16px rgba(201,169,110,0.07)",
+              }
+            : {}
+        }
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-          {/* Logo */}
+          {/* Monogram */}
           <a
             href="#prologue"
             onClick={(e) => handleLinkClick(e, "#prologue")}
             className="flex items-center gap-3 group"
           >
-            <span className="font-heading text-gold font-bold text-lg tracking-[0.2em] uppercase">
+            <span
+              className="font-heading font-bold text-xl tracking-[0.22em] uppercase transition-all duration-300"
+              style={{
+                color: isScrolled ? "var(--garden-gold)" : "var(--garden-gold-light)",
+                textShadow: isScrolled
+                  ? "0 1px 8px rgba(201,169,110,0.2)"
+                  : "0 1px 12px rgba(201,169,110,0.3)",
+              }}
+            >
               H + S
             </span>
           </a>

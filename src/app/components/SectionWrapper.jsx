@@ -22,8 +22,15 @@ export default function SectionWrapper({
       initial={{ opacity: 0, y: 60 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className={`relative backdrop-blur-sm rounded-2xl border border-gold/20 overflow-hidden ${fullHeight ? "min-h-screen" : ""} ${noPadding ? "" : "p-6 md:py-20"
-        } ${className}`}
+      className={`relative overflow-hidden ${fullHeight ? "min-h-screen" : ""} ${
+        noPadding ? "" : "p-2 md:py-20"
+      } ${className}`}
+      // style={{
+      //   borderRadius: "1rem",
+      //   border: "1px solid rgba(242,196,206,0.22)",
+      //   backdropFilter: "blur(4px)",
+      //   WebkitBackdropFilter: "blur(4px)",
+      // }}
     >
       <div className={noPadding ? "" : "max-w-7xl mx-auto"}>{children}</div>
     </motion.section>

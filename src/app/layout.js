@@ -1,13 +1,14 @@
-import { Cinzel_Decorative, Outfit, Playfair_Display } from "next/font/google";
+import { Outfit, Playfair_Display, Tangerine } from "next/font/google";
 import "./globals.css";
 import MusicToggle from "./components/MusicToggle";
 import MobileOnlyNotice from "./components/MobileOnlyNotice";
-import Image from "next/image";
+import { HeroPhaseProvider } from "./components/HeroPhaseContext";
+import FixedFrameLayer from "./components/FixedFrameLayer";
 
-const cinzel = Cinzel_Decorative({
+const cinzel = Tangerine({
   variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -25,13 +26,13 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Harsha & Sachini - A Love Beyond the Walls",
+  title: "Harsha & Sachini — A Garden Wedding",
   description:
-    "Join us for the wedding celebration of Harsha & Sachini. Two hearts that broke through every wall. Shinzou wo Sasageyo!",
+    "Join us for the wedding celebration of Harsha & Sachini. Two hearts united in love, celebrated in bloom. September 19, 2026.",
   openGraph: {
-    title: "Harsha & Sachini - Wedding Invitation",
+    title: "Harsha & Sachini — Wedding Invitation",
     description:
-      "You are cordially invited to witness two hearts unite beyond the walls.",
+      "You are cordially invited to witness the union of two hearts, amid flowers, joy, and love.",
     type: "website",
   },
 };
@@ -42,13 +43,16 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${cinzel.variable} ${outfit.variable} ${playfair.variable} antialiased`}
     >
-      <body className="min-h-screen w-screen">
+      <body
+        className="min-h-screen w-screen"
+        style={{ background: "var(--garden-ivory)" }}
+      >
         <MobileOnlyNotice />
-        {children}
+        <HeroPhaseProvider>
+          {children}
+          <FixedFrameLayer />
+        </HeroPhaseProvider>
         <MusicToggle musicSrc="/bg.mp3" />
-        <div className="fixed top-0 left-0 h-screen w-screen z-[-1]">
-          <Image src="/hero-last.png" loading="lazy" alt="Hero" fill className="object-cover" />
-        </div>
       </body>
     </html>
   );
