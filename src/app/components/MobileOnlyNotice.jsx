@@ -3,15 +3,114 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/* ── Botanical phone illustration ── */
+function PhoneIllustration() {
+  return (
+    <motion.div
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 180, damping: 14, delay: 0.45 }}
+      className="mx-auto mb-8 flex items-center justify-center relative"
+    >
+      {/* Soft blush halo */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{
+          width: 88,
+          height: 88,
+          background:
+            "radial-gradient(circle, rgba(242,196,206,0.38) 0%, transparent 70%)",
+        }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Phone frame */}
+      <div
+        className="relative flex flex-col items-center justify-between py-3"
+        style={{
+          width: 58,
+          height: 108,
+          borderRadius: 18,
+          border: "2px solid var(--garden-gold)",
+          background:
+            "linear-gradient(180deg, rgba(201,169,110,0.07) 0%, rgba(242,196,206,0.06) 100%)",
+          boxShadow:
+            "0 8px 32px rgba(201,169,110,0.15), inset 0 1px 0 rgba(255,255,255,0.5)",
+        }}
+      >
+        {/* Pill notch */}
+        <div
+          className="rounded-full"
+          style={{ width: 22, height: 5, background: "rgba(201,169,110,0.4)" }}
+        />
+
+        {/* Beating heart on screen */}
+        <motion.svg
+          width="28"
+          height="26"
+          viewBox="0 0 80 76"
+          fill="none"
+          animate={{ scale: [1, 1.18, 1] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <defs>
+            <linearGradient
+              id="phone-heart-grad"
+              x1="40"
+              y1="72"
+              x2="40"
+              y2="2"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#b95770" />
+              <stop offset="60%" stopColor="#e9a5b4" />
+              <stop offset="100%" stopColor="#f5d1d9" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M40 72 C37.8 69.9 8 48.7 5.2 27.1 C3.6 14.9 10.7 4.8 21.9 2.5 C29.2 1 35.4 4.2 40 10.2 C44.6 4.2 50.8 1 58.1 2.5 C69.3 4.8 76.4 14.9 74.8 27.1 C72 48.7 42.2 69.9 40 72 Z"
+            fill="url(#phone-heart-grad)"
+          />
+        </motion.svg>
+
+        {/* Home bar */}
+        <div
+          className="rounded-full"
+          style={{
+            width: 28,
+            height: 4,
+            background: "rgba(201,169,110,0.35)",
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Gold ornament divider ── */
+function GoldDivider({ delay = 0, wide = false }) {
+  return (
+    <motion.div
+      className="mx-auto mb-6"
+      style={{
+        height: 1,
+        width: wide ? 120 : 80,
+        background:
+          "linear-gradient(90deg, transparent, var(--garden-gold), transparent)",
+      }}
+      initial={{ scaleX: 0, opacity: 0 }}
+      animate={{ scaleX: 1, opacity: 1 }}
+      transition={{ duration: 0.9, delay, ease: "easeOut" }}
+    />
+  );
+}
+
 export default function MobileOnlyNotice() {
   const [showNotice, setShowNotice] = useState(false);
 
   useEffect(() => {
-    // Check if viewport is wider than a typical mobile device
-    const checkWidth = () => {
-      setShowNotice(window.innerWidth > 768);
-    };
-
+    const checkWidth = () => setShowNotice(window.innerWidth > 768);
     checkWidth();
     window.addEventListener("resize", checkWidth);
     return () => window.removeEventListener("resize", checkWidth);
@@ -24,175 +123,90 @@ export default function MobileOnlyNotice() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.55 }}
           className="fixed inset-0 z-[9999] flex items-center justify-center"
-          style={{
-            background:
-              "linear-gradient(135deg, #f8f6f2 0%, #f0ede8 50%, #e8e4dd 100%)",
-          }}
+          style={{ background: "var(--garden-ivory)" }}
         >
-          {/* Decorative sakura petals in background */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute text-4xl opacity-15"
-                style={{
-                  left: `${10 + i * 12}%`,
-                  top: `${15 + (i % 3) * 25}%`,
-                }}
-                animate={{
-                  y: [0, 30, 0],
-                  rotate: [0, 15, -10, 0],
-                  opacity: [0.1, 0.2, 0.1],
-                }}
-                transition={{
-                  duration: 5 + i * 0.7,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.5,
-                }}
-              >
-                🌸
-              </motion.div>
-            ))}
-          </div>
+          {/* Ambient blush glow — top right */}
+          <div
+            className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(242,196,206,0.22) 0%, transparent 70%)",
+              transform: "translate(30%, -30%)",
+            }}
+          />
+          {/* Ambient gold glow — bottom left */}
+          <div
+            className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(201,169,110,0.12) 0%, transparent 70%)",
+              transform: "translate(-30%, 30%)",
+            }}
+          />
 
-          {/* Content card */}
+          {/* Card */}
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 36, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-            className="relative max-w-md mx-6 text-center"
+            transition={{ duration: 0.65, delay: 0.15, ease: "easeOut" }}
+            className="relative mx-6 max-w-sm w-full text-center px-8 py-10 rounded-3xl"
+            style={{
+              background: "rgba(253,252,249,0.82)",
+              backdropFilter: "blur(18px)",
+              WebkitBackdropFilter: "blur(18px)",
+              border: "1px solid rgba(242,196,206,0.3)",
+              boxShadow:
+                "0 8px 48px rgba(201,169,110,0.10), 0 2px 8px rgba(0,0,0,0.04)",
+            }}
           >
-            {/* Gold decorative line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mx-auto mb-8 h-px w-32"
+            {/* Top blush accent line */}
+            <div
+              className="absolute top-0 left-8 right-8 rounded-full"
               style={{
+                height: 2,
                 background:
-                  "linear-gradient(90deg, transparent, #a8842e, transparent)",
+                  "linear-gradient(90deg, transparent, rgba(212,132,154,0.55), transparent)",
               }}
             />
 
-            {/* Phone icon */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 200,
-                damping: 15,
-                delay: 0.4,
-              }}
-              className="mx-auto mb-6 flex items-center justify-center"
-            >
-              <div
-                className="relative w-16 h-28 rounded-2xl flex items-center justify-center"
-                style={{
-                  border: "2.5px solid #a8842e",
-                  background:
-                    "linear-gradient(180deg, rgba(168,132,46,0.06) 0%, rgba(168,132,46,0.02) 100%)",
-                }}
-              >
-                {/* Phone notch */}
-                <div
-                  className="absolute top-2 w-6 h-1 rounded-full"
-                  style={{ background: "rgba(168,132,46,0.3)" }}
-                />
-                {/* Screen content - heart */}
-                <motion.span
-                  className="text-2xl"
-                  animate={{ scale: [1, 1.15, 1] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  💍
-                </motion.span>
-                {/* Home indicator */}
-                <div
-                  className="absolute bottom-2 w-8 h-1 rounded-full"
-                  style={{ background: "rgba(168,132,46,0.3)" }}
-                />
-              </div>
-            </motion.div>
+            <PhoneIllustration />
 
-            {/* Title */}
+            {/* Heading — Tangerine / font-heading */}
             <motion.h2
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="text-2xl font-bold mb-3"
-              style={{
-                fontFamily: "var(--font-cinzel), serif",
-                color: "#1a1a1a",
-              }}
+              transition={{ duration: 0.5, delay: 0.65 }}
+              className="font-heading text-5xl font-bold mb-1 bg-linear-to-b from-accent via-accent-light to-accent bg-clip-text text-transparent"
             >
-              Best Viewed on Mobile
+              Best on Mobile
             </motion.h2>
 
-            {/* Description */}
+            {/* Weds-style italic accent */}
+            <motion.span
+              className="block font-accent italic text-base mb-5"
+              style={{ color: "var(--garden-rose)", opacity: 0.85 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.85, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.5, type: "spring" }}
+            >
+              a love story, crafted for your palm
+            </motion.span>
+
+            <GoldDivider delay={0.9} />
+
+            {/* Body */}
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.75 }}
-              className="text-base leading-relaxed mb-8"
-              style={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                color: "#4a4540",
-              }}
+              transition={{ duration: 0.5, delay: 1.0 }}
+              className="font-body text-sm leading-relaxed"
+              style={{ color: "var(--garden-taupe)" }}
             >
               This wedding invitation was crafted with love for a mobile
-              experience. Please visit on your phone to enjoy the full
-              animations, music, and interactive moments.
-            </motion.p>
-
-            {/* Gold decorative line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.85 }}
-              className="mx-auto mb-8 h-px w-24"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent, #a8842e, transparent)",
-              }}
-            />
-
-            {/* Continue anyway button */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1 }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setShowNotice(false)}
-              className="px-8 py-3 rounded-full text-sm font-medium tracking-wider uppercase cursor-pointer transition-all duration-300"
-              style={{
-                fontFamily: "var(--font-outfit), sans-serif",
-                background:
-                  "linear-gradient(135deg, #a8842e 0%, #c9a23c 100%)",
-                color: "#fff",
-                boxShadow: "0 4px 20px rgba(168,132,46,0.3)",
-                border: "none",
-              }}
-            >
-              Continue Anyway
-            </motion.button>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-              className="mt-4 text-xs"
-              style={{ color: "#9e978d" }}
-            >
-              Some features may not display optimally on larger screens
+              experience. Please open it on your phone to enjoy the full
+              animations, music, and every detail.
             </motion.p>
           </motion.div>
         </motion.div>

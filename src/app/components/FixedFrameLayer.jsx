@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { useHeroPhase } from "./HeroPhaseContext";
 
 /**
@@ -36,36 +35,13 @@ export default function FixedFrameLayer() {
       className="fixed top-0 left-0 h-screen w-screen flex flex-col justify-between pointer-events-none"
       style={{ zIndex }}
     >
-      {/* Top frame image — slides UP 20 px */}
-      <motion.div
-        animate={{ y: animate && -20 }}
-        transition={{ duration: 3, ease: "easeOut" }}
-      >
-        <Image
-          src="/last-t.png"
-          loading="lazy"
-          alt="Frame top"
-          width={1080}
-          height={500}
-          sizes="100vw"
-          className="w-full h-auto object-cover"
-        />
-      </motion.div>
-      {/* Bottom frame image — slides DOWN 20 px */}
-      <motion.div
-        animate={{ y: animate && 20 }}
-        transition={{ duration: 3, ease: "easeOut" }}
-      >
-        <Image
-          src="/last-b.png"
-          loading="lazy"
-          alt="Frame bottom"
-          width={1080}
-          height={500}
-          sizes="100vw"
-          className="w-full h-auto object-contain"
-        />
-      </motion.div>
+      <Image
+        src="/hero-l.webp"
+        loading="lazy"
+        alt="Frame top"
+        fill
+        className="w-full h-auto object-cover"
+      />
     </div>
   );
 }

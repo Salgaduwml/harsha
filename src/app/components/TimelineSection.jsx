@@ -7,31 +7,31 @@ import TimelineCard from "./TimelineCard";
 const MILESTONES = [
   {
     icon: "🌸",
-    date: "Mar 2020",
+    date: "JUL 2023",
     title: "First Meeting",
     description:
-      "Two souls crossed paths at a gathering among friends. A glance that turned into never ending friendship.",
+      "We were university friends, yet somehow never really met. We graduated without knowing that one day, our paths would cross again.",
   },
   {
     icon: "☕",
-    date: "Jun 2020",
+    date: "AUG 2023",
     title: "Our First Date",
     description:
-      "With nervous hearts and hopeful eyes, they stepped into something new. A quiet café became the backdrop of laughter.",
+      "And then, finally, we met in Kandy for the first time. What started as a simple meeting slowly became something neither of us expected.",
   },
   {
     icon: "🌿",
-    date: "Sep 2023",
+    date: "2023 — 2026",
     title: "Growing Together",
     description:
-      "Through every season and every storm, they discovered that love is not just a feeling — it is a choice made daily.",
+      "From little moments to big memories, we grew closer, one day at a time. Somewhere along the way, you became my favourite part of every day..",
   },
   {
     icon: "💍",
     date: "Feb 2026",
     title: "The Proposal",
     description:
-      "Under a sky scattered with stars, one heart asked another to be forever entwined.",
+      "One day, I stopped wondering where life would take us. I just knew who I wanted beside me for every tomorrow that followed.",
   },
 ];
 

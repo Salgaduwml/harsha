@@ -9,7 +9,7 @@ function TimeUnit({ value, label }) {
   return (
     <div className="flex flex-col items-center bg-linear-to-tr from-accent-light via-accent-light/70 to-accent-light p-1 rounded-lg">
       <div
-        className="relative w-18 h-20 shadow flex items-center justify-center overflow-hidden rounded-2xl"
+        className="relative w-16 h-20 shadow flex items-center justify-center overflow-hidden rounded-2xl"
         style={{
           background:
             "linear-gradient(180deg, #FFFFFF 0%, var(--garden-cream) 50%, #FDFCF9 100%)",
@@ -47,7 +47,7 @@ function TimeUnit({ value, label }) {
         <div className="absolute left-4 right-4 top-1/2 h-4 bg-blush/50 blur-sm" />
       </div>
 
-      <span className="mt-2 pb-0.5 text-[10px] tracking-[0.25em] uppercase font-body text-white font-medium text-center">
+      <span className="mt-1 pb-0.5 text-[10px] tracking-widest uppercase font-body text-white font-medium text-center">
         {label}
       </span>
     </div>

@@ -1,4 +1,4 @@
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import TimelineSection from "./components/TimelineSection";
 import ScrollVideoHero from "./components/ScrollVideoHero";
 import SmoothScroll from "./components/SmoothScroll";
@@ -11,15 +11,13 @@ export default function Home() {
   return (
     <SmoothScroll>
       <main className="relative">
-        <Navbar />
+        {/* <Navbar /> */}
 
         <ScrollVideoHero />
 
         <div className="px-4 py-6">
           <TimelineSection />
         </div>
-
-        {/* <WeddingPartySection /> */}
 
         <div className="px-4 py-6">
           <Countdown />

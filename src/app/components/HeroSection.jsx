@@ -195,6 +195,59 @@ function FloatingPetals() {
   );
 }
 
+/* ── Scroll Down Indicator ── */
+function ScrollDownIndicator({ opacity }) {
+  return (
+    <motion.div
+      className="flex flex-col items-center gap-2 pointer-events-none mt-6"
+      style={{ opacity }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 5.8, duration: 1 }}
+    >
+      <motion.div
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        className="flex flex-col items-center gap-[3px]"
+      >
+        {/* Double chevron for depth */}
+        <svg
+          width="18"
+          height="10"
+          viewBox="0 0 18 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ opacity: 0.45 }}
+        >
+          <path
+            d="M1 1L9 9L17 1"
+            stroke="var(--garden-taupe)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <svg
+          width="18"
+          height="10"
+          viewBox="0 0 18 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ opacity: 0.25 }}
+        >
+          <path
+            d="M1 1L9 9L17 1"
+            stroke="var(--garden-taupe)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function HeroSection() {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -203,6 +256,11 @@ export default function HeroSection() {
   });
 
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.15],
+    [1, 0],
+  );
   const textY = useTransform(scrollYProgress, [0, 0.5], [0, -70]);
 
   return (
@@ -218,14 +276,14 @@ export default function HeroSection() {
         className="text-center px-4"
         style={{ opacity: textOpacity, y: textY }}
       >
-        <div className="mb-16">
+        <div className="mb-8">
           <h1
             className="font-heading text-[80px] font-bold -translate-x-10 -mb-6 bg-clip-text text-transparent bg-linear-to-b from-accent via-accent-light to-accent"
             style={{
               textShadow: "0 2px 24px rgba(201,169,110,0.18)",
             }}
           >
-            <TypewriterText text="Harsha" delay={1.2} />
+            <TypewriterText text="Sachini" delay={1.2} />
           </h1>
           <motion.span
             className="block font-accent italic text-3xl font-medium bg-clip-text text-transparent bg-linear-to-b from-rose via-blush to-rose"
@@ -241,7 +299,7 @@ export default function HeroSection() {
               textShadow: "0 2px 24px rgba(201,169,110,0.18)",
             }}
           >
-            <TypewriterText text="Sachini" delay={2.8} />
+            <TypewriterText text="Harsha" delay={2.8} />
           </h1>
         </div>
         {/* Date line */}
@@ -285,27 +343,9 @@ export default function HeroSection() {
             9 AM - 4 PM
           </p>
         </motion.div>
-
-        {/* Bottom flourish */}
-        {/* <motion.div
-          className="mt-6 flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 5.4, duration: 1 }}
-        >
-          <svg width="120" height="16" viewBox="0 0 120 16" fill="none">
-            <path
-              d="M 0 8 Q 30 2 60 8 Q 90 14 120 8"
-              stroke="rgba(242,196,206,0.55)"
-              strokeWidth="1"
-              fill="none"
-            />
-            <circle cx="60" cy="8" r="2.5" fill="rgba(201,169,110,0.5)" />
-            <circle cx="30" cy="5" r="1.5" fill="rgba(242,196,206,0.6)" />
-            <circle cx="90" cy="11" r="1.5" fill="rgba(242,196,206,0.6)" />
-          </svg>
-        </motion.div> */}
       </motion.div>
+
+      <ScrollDownIndicator opacity={scrollIndicatorOpacity} />
     </section>
   );
 }

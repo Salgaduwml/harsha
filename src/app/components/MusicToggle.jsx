@@ -98,7 +98,7 @@ function Waveform({ isPlaying }) {
           x={i * 7}
           width="3"
           rx="1.5"
-          fill="#d4849a"
+          fill="#e2c88a"
           initial={{ height: bar.min, y: (20 - bar.min) / 2 }}
           animate={
             isPlaying
