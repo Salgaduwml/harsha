@@ -51,7 +51,10 @@ export default function ScrollVideoHero() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Wait for canplaythrough — guarantees smooth, uninterrupted playback
+  // Wait for the video to be ready enough to play.
+  // iOS Safari never fires `canplaythrough` before a user gesture, so we
+  // also listen for `loadedmetadata` (iOS does fire this) and set a hard
+  // timeout fallback so the loader always clears on mobile.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -62,9 +65,24 @@ export default function ScrollVideoHero() {
       return;
     }
 
-    const handler = () => setVideoReady(true);
-    video.addEventListener("canplaythrough", handler);
-    return () => video.removeEventListener("canplaythrough", handler);
+    const markReady = () => setVideoReady(true);
+
+    // `canplaythrough` — ideal for desktop browsers
+    video.addEventListener("canplaythrough", markReady);
+    // `loadedmetadata` — fires on iOS Safari even before user interaction
+    video.addEventListener("loadedmetadata", markReady);
+
+    // Hard fallback: if neither event fires within 4 s (e.g. slow connection
+    // or iOS data-saver behaviour), dismiss the loader anyway so the user
+    // isn't stuck. The "You are Invited" button stays disabled until the
+    // video is truly ready, so playback quality is unaffected.
+    const fallback = setTimeout(markReady, 4000);
+
+    return () => {
+      video.removeEventListener("canplaythrough", markReady);
+      video.removeEventListener("loadedmetadata", markReady);
+      clearTimeout(fallback);
+    };
   }, []);
 
   const handleEnter = useCallback(() => {
