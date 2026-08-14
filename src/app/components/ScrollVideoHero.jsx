@@ -4,30 +4,38 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "./HeroSection";
 import { useLenis } from "./LenisContext";
-import { useHeroPhase } from "./HeroPhaseContext";
 
 /**
- * ScrollVideoHero  (now: CinematicEntry)
+ * ScrollVideoHero  (CinematicEntry)
  * ----------------------------------------
  * Flow:
  *  1. Page loads → fullscreen loading screen (heart fills bottom→top).
  *  2. Video canplaythrough fires → loader fades out, "Enter" button appears.
- *  3. User clicks "You are Invited" → video plays smoothly, overlay fades out.
- *  4. Video ends → video fades to opacity 0, HeroSection fades in.
+ *  3. User clicks "You are Invited" → hero-clip.mp4 plays, overlay fades out.
+ *  4. ~4 s after click → HeroSection text fades in ON TOP of the still-playing
+ *     video. Scroll is unlocked at this moment.
+ *  5. hero-clip.mp4 ends → instantly swap src to hero-loop.mp4 (no fade).
+ *     hero-loop.mp4 loops forever as a fixed background behind all content.
  */
 
 // Duration of the one-shot heart fill animation (ms).
-// Loader screen stays visible until BOTH this timer AND canplaythrough have fired.
 const HEART_ANIM_MS = 1800;
+
+// Delay (ms) after the user clicks before content fades in and scroll unlocks.
+const CONTENT_REVEAL_MS = 4000;
 
 export default function ScrollVideoHero() {
   const videoRef = useRef(null);
   const lenis = useLenis();
-  const { setPhase: setGlobalPhase } = useHeroPhase();
+  const contentTimerRef = useRef(null);
 
-  // 'idle'    — waiting for user to click Enter
-  // 'playing' — video is playing, overlay gone
-  // 'done'    — video ended, HeroSection visible
+  /**
+   * phase:
+   *  'idle'     — waiting for user to click Enter
+   *  'playing'  — hero-clip.mp4 is playing; content not yet visible
+   *  'content'  — ~4 s in; HeroSection fades in, scroll unlocked
+   *  'loop'     — clip ended; instantly swapped to hero-loop.mp4 (looping)
+   */
   const [phase, setPhase] = useState("idle");
 
   // true once the video has enough data to play through without buffering
@@ -39,43 +47,28 @@ export default function ScrollVideoHero() {
   // Loader hides only when BOTH conditions are met
   const loaderVisible = !animDone || !videoReady;
 
-  // Keep global phase in sync so FixedFrameLayer can react
-  useEffect(() => {
-    setGlobalPhase(phase);
-  }, [phase, setGlobalPhase]);
+  // Helper: content is visible in 'content' and 'loop' phases
+  const contentVisible = phase === "content" || phase === "loop";
 
-  // One-shot timer that marks the animation as done.
-  // Runs on every mount so the heart fill always plays on page load.
+  // ── Heart fill timer ──────────────────────────────────────────────────────
   useEffect(() => {
     const timer = setTimeout(() => setAnimDone(true), HEART_ANIM_MS);
     return () => clearTimeout(timer);
   }, []);
 
-  // Wait for the video to be ready enough to play.
-  // iOS Safari never fires `canplaythrough` before a user gesture, so we
-  // also listen for `loadedmetadata` (iOS does fire this) and set a hard
-  // timeout fallback so the loader always clears on mobile.
+  // ── Video readiness ───────────────────────────────────────────────────────
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Already fully buffered (e.g. cached)
     if (video.readyState >= 4) {
       setVideoReady(true);
       return;
     }
 
     const markReady = () => setVideoReady(true);
-
-    // `canplaythrough` — ideal for desktop browsers
     video.addEventListener("canplaythrough", markReady);
-    // `loadedmetadata` — fires on iOS Safari even before user interaction
     video.addEventListener("loadedmetadata", markReady);
-
-    // Hard fallback: if neither event fires within 4 s (e.g. slow connection
-    // or iOS data-saver behaviour), dismiss the loader anyway so the user
-    // isn't stuck. The "You are Invited" button stays disabled until the
-    // video is truly ready, so playback quality is unaffected.
     const fallback = setTimeout(markReady, 4000);
 
     return () => {
@@ -85,120 +78,140 @@ export default function ScrollVideoHero() {
     };
   }, []);
 
+  // ── Content reveal timer (starts when phase → 'playing') ─────────────────
+  useEffect(() => {
+    if (phase !== "playing") return;
+
+    contentTimerRef.current = setTimeout(() => {
+      setPhase((prev) => (prev === "playing" ? "content" : prev));
+    }, CONTENT_REVEAL_MS);
+
+    return () => clearTimeout(contentTimerRef.current);
+  }, [phase]);
+
+  // ── Scroll lock: unlock when content becomes visible ─────────────────────
+  useEffect(() => {
+    if (!lenis) return;
+    if (contentVisible) {
+      lenis.start();
+    } else {
+      lenis.stop();
+    }
+  }, [lenis, contentVisible]);
+
+  useEffect(() => {
+    document.body.style.overflow = contentVisible ? "" : "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [contentVisible]);
+
+  // ── User clicks "You are Invited" ────────────────────────────────────────
   const handleEnter = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
     setPhase("playing");
     video.play().catch(() => {
-      // Autoplay blocked — skip straight to hero
-      setPhase("done");
+      // Autoplay blocked — reveal content immediately
+      setPhase("content");
     });
   }, []);
 
+  // ── hero-clip.mp4 ends → instant swap to hero-loop.mp4 ───────────────────
   const handleVideoEnd = useCallback(() => {
-    setPhase("done");
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Clear the content timer in case the clip ended before 4 s
+    clearTimeout(contentTimerRef.current);
+
+    setPhase("loop");
+
+    video.src = "/hero-loop.mp4";
+    video.loop = true;
+    video.play().catch(() => {});
   }, []);
 
-  // Lock Lenis scroll until video is done
-  useEffect(() => {
-    if (!lenis) return;
-    if (phase === "done") {
-      lenis.start();
-    } else {
-      lenis.stop();
-    }
-  }, [lenis, phase]);
-
-  // Also lock native scroll as a fallback
-  useEffect(() => {
-    document.body.style.overflow = phase === "done" ? "" : "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [phase]);
-
   return (
-    <div className="relative w-full z-50">
-      {/* ─── Sticky video container ─── */}
-      <div className="relative w-full h-screen overflow-hidden">
-        <motion.video
+    <div className="relative w-full">
+      {/* ─── Full-screen fixed video — behind ALL page content globally ─── */}
+      <div className="fixed inset-0 w-full h-screen overflow-hidden z-[-1]">
+        <video
           ref={videoRef}
           src="/hero-clip.mp4"
           muted
           playsInline
           preload="auto"
           onEnded={handleVideoEnd}
-          animate={{ opacity: phase === "done" ? 0 : 1 }}
-          transition={{ duration: 1.4, ease: "easeInOut" }}
           className="absolute inset-0 h-full w-full object-cover"
         />
-
-        {/* ─── "You are Invited" overlay ─── */}
-        <AnimatePresence>
-          {phase === "idle" && !loaderVisible && (
-            <motion.div
-              key="overlay"
-              className="absolute bottom-40 translate-x-1/2 right-1/2 flex flex-col items-center justify-center z-10 w-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-            >
-              <button
-                id="enter-btn"
-                onClick={handleEnter}
-                disabled={!videoReady}
-                className="relative z-10 group p-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/30"
-                style={{
-                  cursor: videoReady ? "pointer" : "default",
-                  pointerEvents: videoReady ? "auto" : "none",
-                  opacity: videoReady ? 1 : 0.4,
-                  transition: "opacity 0.35s ease",
-                }}
-              >
-                <motion.span
-                  className="relative flex items-center justify-center px-7 py-2 rounded-lg bg-linear-to-tr from-accent via-accent-light to-accent-light"
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileTap={videoReady ? { scale: 0.96 } : undefined}
-                  transition={{ delay: 0.5, duration: 0.9, ease: "easeOut" }}
-                >
-                  <span className="font-heading text-4xl font-bold text-white">
-                    You are Invited
-                  </span>
-                </motion.span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ─── Heart loading screen ─── */}
-        <AnimatePresence>
-          {loaderVisible && (
-            <motion.div
-              key="loader"
-              className="absolute inset-0 flex flex-col items-center justify-center z-20"
-              style={{ background: "var(--garden-ivory)" }}
-              exit={{
-                opacity: 0,
-                transition: { duration: 0.7, ease: "easeInOut" },
-              }}
-            >
-              <HeartLoader />
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
-      {/* ─── HeroSection — lives below (or fades in as video fades out) ─── */}
+      {/* ─── HeroSection — fades in at 'content' phase, one screen tall ─── */}
       <motion.div
-        className="absolute inset-0"
-        animate={{ opacity: phase === "done" ? 1 : 0 }}
-        transition={{ duration: 1.2, ease: "easeInOut", delay: 0.3 }}
-        style={{ pointerEvents: phase === "done" ? "auto" : "none" }}
+        className="relative min-h-screen"
+        animate={{ opacity: contentVisible ? 1 : 0 }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
+        style={{ pointerEvents: contentVisible ? "auto" : "none" }}
       >
         <HeroSection />
       </motion.div>
+
+      {/* ─── "You are Invited" overlay ─── */}
+      <AnimatePresence>
+        {phase === "idle" && !loaderVisible && (
+          <motion.div
+            key="overlay"
+            className="fixed inset-0 flex flex-col justify-end pb-40 items-center z-20 w-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          >
+            <button
+              id="enter-btn"
+              onClick={handleEnter}
+              disabled={!videoReady}
+              className="relative z-10 group p-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/30"
+              style={{
+                cursor: videoReady ? "pointer" : "default",
+                pointerEvents: videoReady ? "auto" : "none",
+                opacity: videoReady ? 1 : 0.4,
+                transition: "opacity 0.35s ease",
+              }}
+            >
+              <motion.span
+                className="relative flex items-center justify-center px-7 py-2 rounded-lg bg-linear-to-tr from-accent via-accent-light to-accent-light"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileTap={videoReady ? { scale: 0.96 } : undefined}
+                transition={{ delay: 0.5, duration: 0.9, ease: "easeOut" }}
+              >
+                <span className="font-heading text-4xl font-bold text-white">
+                  You are Invited
+                </span>
+              </motion.span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Heart loading screen ─── */}
+      <AnimatePresence>
+        {loaderVisible && (
+          <motion.div
+            key="loader"
+            className="fixed inset-0 flex flex-col items-center justify-center z-30"
+            style={{ background: "var(--garden-ivory)" }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.7, ease: "easeInOut" },
+            }}
+          >
+            <HeartLoader />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

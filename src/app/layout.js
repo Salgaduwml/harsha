@@ -3,7 +3,6 @@ import "./globals.css";
 import MusicToggle from "./components/MusicToggle";
 import MobileOnlyNotice from "./components/MobileOnlyNotice";
 import { HeroPhaseProvider } from "./components/HeroPhaseContext";
-import FixedFrameLayer from "./components/FixedFrameLayer";
 
 const cinzel = Tangerine({
   variable: "--font-cinzel",
@@ -47,7 +46,6 @@ export default function RootLayout({ children }) {
         <MobileOnlyNotice />
         <HeroPhaseProvider>
           {children}
-          <FixedFrameLayer />
         </HeroPhaseProvider>
         <MusicToggle musicSrc="/bg.mp3" />
       </body>
