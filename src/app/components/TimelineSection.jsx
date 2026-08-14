@@ -24,14 +24,14 @@ const MILESTONES = [
     date: "2023 — 2026",
     title: "Growing Together",
     description:
-      "From little moments to big memories, we grew closer, one day at a time. Somewhere along the way, you became my favourite part of every day..",
+      "From little moments to beautiful memories, we grew closer, laughed together, and made every day a part of our story.",
   },
   {
     icon: "💍",
-    date: "Feb 2026",
+    date: "Jun 2026",
     title: "The Proposal",
     description:
-      "One day, I stopped wondering where life would take us. I just knew who I wanted beside me for every tomorrow that followed.",
+      "After all the memories we shared, we knew we wanted to spend every tomorrow together.",
   },
 ];
 
