@@ -31,12 +31,9 @@ export default function FixedFrameLayer() {
   const zIndex = phase === "done" ? 60 : 5;
 
   return (
-    <div
-      className="fixed top-0 left-0 h-screen w-screen flex flex-col justify-between pointer-events-none"
-      style={{ zIndex }}
-    >
+    <div className="fixed top-0 left-0 h-screen w-screen flex flex-col justify-between pointer-events-none z-[-1]">
       <Image
-        src="/hero-l.webp"
+        src="/hero.webp"
         loading="lazy"
         alt="Frame top"
         fill
