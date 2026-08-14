@@ -57,10 +57,17 @@ export default function ScrollVideoHero() {
   }, []);
 
   // ── Video readiness ───────────────────────────────────────────────────────
+  // `canplaythrough` = browser estimates it can play without buffering pauses.
+  // `loadedmetadata` is intentionally NOT used here — it fires too early (only
+  // duration/dimensions known, no frames buffered) and would dismiss the loader
+  // before the video is actually ready to play.
+  // The 4 s fallback exists solely for iOS Safari, which never fires
+  // `canplaythrough` before a user gesture.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Already fully buffered (e.g. cached)
     if (video.readyState >= 4) {
       setVideoReady(true);
       return;
@@ -68,12 +75,10 @@ export default function ScrollVideoHero() {
 
     const markReady = () => setVideoReady(true);
     video.addEventListener("canplaythrough", markReady);
-    video.addEventListener("loadedmetadata", markReady);
     const fallback = setTimeout(markReady, 4000);
 
     return () => {
       video.removeEventListener("canplaythrough", markReady);
-      video.removeEventListener("loadedmetadata", markReady);
       clearTimeout(fallback);
     };
   }, []);
@@ -134,7 +139,7 @@ export default function ScrollVideoHero() {
 
   return (
     <div className="relative w-full">
-      {/* ─── Full-screen fixed video — behind ALL page content globally ─── */}
+      {/* ─── Full-screen fixed video — hidden until loader is gone ─── */}
       <div className="fixed inset-0 w-full h-screen overflow-hidden z-[-1]">
         <video
           ref={videoRef}
@@ -144,6 +149,10 @@ export default function ScrollVideoHero() {
           preload="auto"
           onEnded={handleVideoEnd}
           className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            opacity: loaderVisible ? 0 : 1,
+            transition: "opacity 0.5s ease",
+          }}
         />
       </div>
 

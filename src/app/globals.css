@@ -86,10 +86,11 @@
 
 html {
   scroll-behavior: smooth;
+  background: transparent;
 }
 
 body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
 }
