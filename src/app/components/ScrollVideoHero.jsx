@@ -25,7 +25,8 @@ const HEART_ANIM_MS = 1800;
 const CONTENT_REVEAL_MS = 4000;
 
 export default function ScrollVideoHero() {
-  const videoRef = useRef(null);
+  const clipRef = useRef(null);
+  const loopRef = useRef(null);
   const lenis = useLenis();
   const contentTimerRef = useRef(null);
 
@@ -64,7 +65,7 @@ export default function ScrollVideoHero() {
   // The 4 s fallback exists solely for iOS Safari, which never fires
   // `canplaythrough` before a user gesture.
   useEffect(() => {
-    const video = videoRef.current;
+    const video = clipRef.current;
     if (!video) return;
 
     // Already fully buffered (e.g. cached)
@@ -82,6 +83,17 @@ export default function ScrollVideoHero() {
       clearTimeout(fallback);
     };
   }, []);
+
+  // ── Preload hero-loop.mp4 as soon as the clip starts playing ─────────────
+  // This gives the browser the full clip duration (~clip length) to buffer the
+  // loop video so the swap at clip-end has zero blank-frame gap.
+  useEffect(() => {
+    if (phase !== "playing") return;
+    const loop = loopRef.current;
+    if (!loop) return;
+    loop.preload = "auto";
+    loop.load();
+  }, [phase]);
 
   // ── Content reveal timer (starts when phase → 'playing') ─────────────────
   useEffect(() => {
@@ -113,7 +125,7 @@ export default function ScrollVideoHero() {
 
   // ── User clicks "You are Invited" ────────────────────────────────────────
   const handleEnter = useCallback(() => {
-    const video = videoRef.current;
+    const video = clipRef.current;
     if (!video) return;
     setPhase("playing");
     video.play().catch(() => {
@@ -123,26 +135,36 @@ export default function ScrollVideoHero() {
   }, []);
 
   // ── hero-clip.mp4 ends → instant swap to hero-loop.mp4 ───────────────────
+  // We do NOT reassign video.src. Instead we just reveal the loop <video>
+  // element that has been silently preloading since the clip started.
   const handleVideoEnd = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
     // Clear the content timer in case the clip ended before 4 s
     clearTimeout(contentTimerRef.current);
 
     setPhase("loop");
 
-    video.src = "/hero-loop.mp4";
-    video.loop = true;
-    video.play().catch(() => {});
+    // Loop video is already buffered — start it immediately
+    const loop = loopRef.current;
+    if (loop) loop.play().catch(() => {});
   }, []);
 
   return (
     <div className="relative w-full">
-      {/* ─── Full-screen fixed video — hidden until loader is gone ─── */}
+      {/* ─── Full-screen fixed videos — clip on top, loop underneath ─── */}
       <div className="fixed inset-0 w-full h-screen overflow-hidden z-[-1]">
+        {/* Loop video: preloads while clip plays, revealed when clip ends */}
         <video
-          ref={videoRef}
+          ref={loopRef}
+          src="/hero-loop.mp4"
+          muted
+          playsInline
+          loop
+          preload="none"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Clip video: plays first, fades out when loop takes over */}
+        <video
+          ref={clipRef}
           src="/hero-clip.mp4"
           muted
           playsInline
@@ -150,7 +172,7 @@ export default function ScrollVideoHero() {
           onEnded={handleVideoEnd}
           className="absolute inset-0 h-full w-full object-cover"
           style={{
-            opacity: loaderVisible ? 0 : 1,
+            opacity: loaderVisible || phase === "loop" ? 0 : 1,
             transition: "opacity 0.5s ease",
           }}
         />

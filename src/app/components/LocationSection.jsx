@@ -180,7 +180,7 @@ export default function LocationSection() {
             {INFO_ITEMS.map((item, i) => (
               <motion.div
                 key={item.label}
-                className="floral-card rounded-2xl p-5 relative overflow-hidden group flex-1"
+                className="floral-card rounded-2xl p-5 relative overflow-hidden group flex-1 bg-white/10 backdrop-blur-sm"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

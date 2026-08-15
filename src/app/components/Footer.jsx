@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="text-center pt-14 pb-42">
+    <div className="text-center py-14">
       <p className="font-body text-sm text-rose/70">
         Developed with 💖 by{" "}
         <Link
